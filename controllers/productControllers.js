@@ -2,18 +2,193 @@ const crypto = require('crypto')
 const Product = require('../model/Product')
 const uuid = crypto.randomUUID()
 
+exports.sortLimit=async(req,res,next)=>{
+  try{
+
+    // -------Find product $sort $skip $limit operator---------
+    const {page,count} = req.query
+    const total = await Product.find()
+    const pages = Math.ceil(total.length/count)
+    const products = await Product.find()
+    .sort({
+      name : -1
+    })
+    .skip(page > 0 ? page * count : 0)
+    .limit(2)
+
+    // -------Find product $sort $limit operator---------
+    // const products = await Product.find()
+    // .sort({
+    //   name : 1
+    // })
+    // .limit(2)
+
+    // -------Find product $sort operator---------
+    // const products = await Product.find({
+      
+    // }).sort({
+    //   name : -1
+    // })
+
+    res.status(200).json({
+      success : true,
+      status : 200,
+      message : '',
+      data : {
+        pages,
+        products
+      }
+    })
+
+  }catch(err){
+    console.log(err)
+    res.status(500).json({
+      success : true,
+      status : 500,
+      message : '',
+      data : {err}
+    })
+  }
+}
+
+exports.arrayQuery=async(req,res,next)=>{
+  try{
+    
+    // -------Find product $elemMatch operator---------
+    const products = await Product.find({
+      storage : {
+        $elemMatch : { 
+          $lt : 128
+        }
+      }
+    })
+    
+    // -------Find product $all operator---------
+    // const products = await Product.find({
+    //   color: {
+    //     $all : ['purple', 'black']
+    //   }
+    // })
+
+    // -------Find product $size operator---------
+    // const products = await Product.find({
+    //   $or : [
+    //     {
+    //       color : {
+    //         $size : 2
+    //       }
+    //     },
+    //     {
+    //       color : {
+    //         $size : 3
+    //       }
+    //     }
+    //   ]
+    // })
+
+    res.status(200).json({
+      success : true,
+      status : 200,
+      message : '',
+      data : {
+        total : products.length,
+        products
+      }
+    })
+
+  }catch(err){
+    console.log(err)
+    res.status(500).json({
+      success : true,
+      status : 500,
+      message : '',
+      data : {err}
+    })
+  }
+}
+
+exports.elementQuery=async(req,res,next)=>{
+  try{
+    
+    // -------Find product $type operator---------
+    const products = await Product.find({
+      price : {
+        $type : "number"
+      }
+    })
+
+    res.status(200).json({
+      success : true,
+      status : 200,
+      message : '',
+      data : {
+        total : products.length,
+        products
+      }
+    })
+
+  }catch(err){
+    console.log(err)
+    res.status(500).json({
+      success : true,
+      status : 500,
+      message : '',
+      data : {err}
+    })
+  }
+}
+
+
 exports.logicalQuery=async(req,res,next)=>{
   try{
     
-    // -------Find product $nin operator---------
+    // -------Find product $expr operator---------
     const products = await Product.find({
-      price : {
-        $nin : [699,799]
-      },
-      color : {
-        $nin : ['purple']
+      $expr : {
+        $gt : ['$specification.ram',8]
       }
     })
+
+    // -------Find product $nor operator---------
+    // const products = await Product.find({
+    //   $nor :[
+    //     {price : 899},
+    //     {color : 'gold'}
+    //   ]
+    // })
+
+    // -------Find product $not operator---------
+    // const products = await Product.find({
+    //   price : {
+    //     $not : {
+    //       $gt : 599
+    //     }
+    //   }
+    // })
+
+    // -------Find product $or operator---------
+    // const products = await Product.find({
+    //   $or : [
+    //     {
+    //       price : {$gt : 899}
+    //     },
+    //     {
+    //       color : {$in : ['purple']}
+    //     }
+    //   ]
+    // })
+
+    // -------Find product $and operator---------
+    // const products = await Product.find({
+    //   $and : [
+    //     {
+    //       price : {$gte : 699}
+    //     },
+    //     {
+    //       color : {$in : ['black']}
+    //     }
+    //   ]
+    // })
 
 
     res.status(200).json({
