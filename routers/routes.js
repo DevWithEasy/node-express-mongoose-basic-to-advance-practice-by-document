@@ -1,6 +1,11 @@
 const productRouter = require("./productRouter")
+const userRouter = require("./userRouter")
 
 const routes = [
+  {
+    path: "/api/user",
+    handler : userRouter
+  },
   {
     path: "/api/product",
     handler : productRouter

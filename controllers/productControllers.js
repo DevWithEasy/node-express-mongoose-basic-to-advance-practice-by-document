@@ -2,19 +2,158 @@ const crypto = require('crypto')
 const Product = require('../model/Product')
 const uuid = crypto.randomUUID()
 
+exports.updating=async(req,res,next)=>{
+  try{
+
+    // const products = await Product.find()
+
+    // -------update ducuments array of object ---------
+    // const {id,comment} = req.query
+    // await Product.findOneAndUpdate(
+    //   {
+    //     _id: id,
+    //     'comments._id' : comment
+    //   },
+    //   {
+    //     $set : {
+    //       'comments.$.comment' : req.body.update_comment
+    //     }
+    //   },
+    //   {new : true}
+    // )
+    // const product = await Product.findById(id)
+    // .populate('comments.user','-_id name email')
+
+
+    // -------update ducuments $pull operator---------
+    // const {id,comment} = req.query
+    // const product = await Product.findByIdAndUpdate(id,{
+    //   $pull : {
+    //     comments : {
+    //       _id : {
+    //         $in : comment
+    //       }
+    //     }
+    //   }
+    // },{new : true})
+    // const product = await Product.findById(id)
+    // .populate('comments.user','-_id name email')
+
+
+    // -------update ducuments $push operator---------
+    // const {id} = req.query
+    // const product = await Product.findByIdAndUpdate(id,{
+    //   $push : {
+    //     comments : req.body
+    //   }
+    // },{new : true})
+    // const product = await Product.findById(id)
+    // .populate('comments.user','-_id name email')
+    
+
+    // -------update ducuments $unset operator---------
+    // await Product.updateMany({},{
+    //   $unset :{
+    //     stock : 1,
+    //   }
+    // })
+    // const products = await Product.find()
+
+    // -------update ducuments $rename operator---------
+    // await Product.updateMany({},{
+    //   $rename :{
+    //     product_name : 'name',
+    //   }
+    // })
+    // const products = await Product.find()
+
+    // -------update ducuments $mul operator---------
+    // const {id} = req.query
+    // const product = await Product.findByIdAndUpdate(id,{
+    //   $mul : {
+    //     stock : 2
+    //   }
+    // },{new : true})
+
+    // -------update ducuments $inc operator---------
+    // const {id} = req.query
+    // const product = await Product.findByIdAndUpdate(id,{
+    //   $inc : {
+    //     stock : 10
+    //   }
+    // },{new : true})
+
+
+    // -------update many ducuments---------
+    //specific many products update
+    // const {ids} = req.body
+    // await Product.updateMany(
+    //   {
+    //     _id:{
+    //       $in : ids
+    //     }
+    //   },
+    //   {
+    //     $set :{
+    //       stock : 40
+    //     }
+    //   }
+    // )
+    // const products = await Product.find()
+
+
+    //-------update many ducuments---------
+    //set new field all documents and update
+    // const products = await Product.updateMany({},{
+    //   $set: {
+    //     stock : 20
+    //   }
+    // })
+    // const products = await Product.find()
+
+
+    // -------update single ducuments---------
+    // const {id} = req.query
+    // const product = await Product.findByIdAndUpdate(id,{
+    //   $set : {
+    //     price : 1099,
+    //     'specification.cpu' : 4.1,
+    //     'color.0' : 'black'
+    //   }
+    // },{new : true})
+    res.status(200).json({
+      success : true,
+      status : 200,
+      message : '',
+      data : {
+        product
+      }
+    })
+
+  }catch(err){
+    console.log(err)
+    res.status(500).json({
+      success : true,
+      status : 500,
+      message : '',
+      data : {err}
+    })
+  }
+}
+
 exports.sortLimit=async(req,res,next)=>{
   try{
 
-    // -------Find product $sort $skip $limit operator---------
-    const {page,count} = req.query
-    const total = await Product.find()
-    const pages = Math.ceil(total.length/count)
+    // -------Pagination create with $sort $skip $limit operator---------
+    const {page,limit} = req.query
+    const total = await Product.countDocuments()
+    const pages = Math.ceil(total/limit)
     const products = await Product.find()
     .sort({
       name : -1
     })
-    .skip(page > 0 ? page * count : 0)
-    .limit(2)
+    .skip(page > 0 ? (page-1) * limit : 0)
+    .limit(limit)
 
     // -------Find product $sort $limit operator---------
     // const products = await Product.find()
@@ -55,13 +194,13 @@ exports.arrayQuery=async(req,res,next)=>{
   try{
     
     // -------Find product $elemMatch operator---------
-    const products = await Product.find({
-      storage : {
-        $elemMatch : { 
-          $lt : 128
-        }
-      }
-    })
+    // const products = await Product.find({
+    //   storage : {
+    //     $elemMatch : { 
+    //       $lt : 128
+    //     }
+    //   }
+    // })
     
     // -------Find product $all operator---------
     // const products = await Product.find({
